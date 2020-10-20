@@ -41,6 +41,21 @@ def Cn_U3_0theta0(qc, control_indices, target_index, theta):
     else:
         raise Exception("C^nU_3(0,theta,0) not yet implemented for n="+str(n)+".")
 
+def Cn_U3_0theta0_count(control_indices):
+    """
+    Ref: https://arxiv.org/abs/0708.3274
+
+    """
+    n=len(control_indices)
+    if n == 0:
+        num_cx=0
+    elif n == 1:
+        num_cx=1
+    elif n == 2:
+        num_cx=5
+    else:
+        raise Exception("C^nU_3(0,theta,0) not yet implemented for n="+str(n)+".")
+    return num_cx
 
 def binstringToLabels_MaxKCut(k_cuts,num_V,binstring):
     k_bits = kBits_MaxKCut(k_cuts)
@@ -408,6 +423,147 @@ def createCircuit_MaxCut(x, G, depth, k_cuts, version=1, usebarrier=False, name=
     else:
         circ.measure(q, c)
     return circ
+
+def createCircuit_MaxCut_count(k_cuts):
+
+    num_cx = 0
+
+    k_bits = kBits_MaxKCut(k_cuts)
+    k_is_power_of_two = math.log(k_cuts, 2).is_integer()
+    if not k_is_power_of_two:
+        num_aux=2
+        ind_a1=2 * k_bits + num_aux - 2
+        ind_a2=2 * k_bits + num_aux - 1
+    if k_cuts == 2:
+        num_cx += 2
+    elif k_is_power_of_two:
+        I = 1 * k_bits
+        J = 2 * k_bits
+        for k in range(k_bits):
+            num_cx += 1
+        num_cx += Cn_U3_0theta0_count([J-1+ind for ind in range(1,k_bits)])
+        for k in reversed(range(k_bits)):
+            num_cx += 1
+    elif k_cuts == 3:
+        I = 1 * k_bits
+        J = 2 * k_bits
+
+        for k in range(k_bits):
+            num_cx += 1
+        num_cx += Cn_U3_0theta0_count([J-1+ind for ind in range(1,k_bits)])
+        for k in reversed(range(k_bits)):
+            num_cx += 1
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+    elif k_cuts == 5:
+        I = 1 * k_bits
+        J = 2 * k_bits
+
+        for k in range(k_bits):
+            num_cx += 1
+        num_cx += Cn_U3_0theta0_count([J-1+ind for ind in range(1,k_bits)])
+        for k in reversed(range(k_bits)):
+            num_cx += 1
+
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+    elif k_cuts == 6:
+        I = 1 * k_bits
+        J = 2 * k_bits
+
+        for k in range(k_bits):
+            num_cx += 1
+        num_cx += Cn_U3_0theta0_count([J-1+ind for ind in range(1,k_bits)])
+        for k in reversed(range(k_bits)):
+            num_cx += 1
+
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+    elif k_cuts == 7:
+        I = 1 * k_bits
+        J = 2 * k_bits
+
+        for k in range(k_bits):
+            num_cx += 1
+        num_cx += Cn_U3_0theta0_count([J-1+ind for ind in range(1,k_bits)])
+        for k in reversed(range(k_bits)):
+            num_cx += 1
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += 6
+        num_cx += Cn_U3_0theta0_count([ind_a1, ind_a2])
+        num_cx += 6
+        num_cx += 6
+
+    else:
+        raise Exception("Circuit creation for k=",k_cuts," not implemented for version 1 (decomposed).")
+
+    return num_cx
+
 
 
 def find_max_cut_brute_force(G, k_cuts):
